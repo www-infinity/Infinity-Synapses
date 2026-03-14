@@ -32,9 +32,13 @@ const CHANNELS: Channel[] = [
 
 interface BtcData { hash: string; height: number; time: number; fallback?: boolean }
 
-function channelFromHash(hash: string): number {
+// Only channels that have a real stream URL can be spun to automatically
+const PLAYABLE_CHANNELS = CHANNELS.filter((ch) => ch.streamUrl.trim() !== "");
+
+function channelFromHash(hash: string): Channel {
   const bigVal = BigInt("0x" + hash.slice(0, 16));
-  return Number(bigVal % BigInt(CHANNELS.length));
+  const idx = Number(bigVal % BigInt(PLAYABLE_CHANNELS.length));
+  return PLAYABLE_CHANNELS[idx];
 }
 
 export default function RadioPage() {
@@ -62,8 +66,7 @@ export default function RadioPage() {
       if (!res.ok) throw new Error(`Status ${res.status}`);
       const data = (await res.json()) as BtcData;
       setBtc(data);
-      const idx = channelFromHash(data.hash);
-      setChannel(CHANNELS[idx]);
+      setChannel(channelFromHash(data.hash));
     } catch (e) {
       // Fallback: generate a deterministic hash so the radio always works
       const fallback = Array.from({ length: 64 }, () =>
@@ -71,7 +74,7 @@ export default function RadioPage() {
       ).join("");
       const fallbackData: BtcData = { hash: fallback, height: 0, time: Date.now() / 1000, fallback: true };
       setBtc(fallbackData);
-      setChannel(CHANNELS[channelFromHash(fallback)]);
+      setChannel(channelFromHash(fallback));
       setError(e instanceof Error ? e.message : "Failed to fetch BTC block");
     } finally {
       setLoading(false);
@@ -154,7 +157,7 @@ export default function RadioPage() {
                 </div>
                 <div>
                   <span style={{ color: "var(--gold)" }}>CHAN  </span>
-                  Ch {channel?.id ?? "?"} / {CHANNELS.length}
+                  Ch {channel?.id ?? "?"} ({PLAYABLE_CHANNELS.length} of {CHANNELS.length} playable)
                 </div>
               </>
             ) : (
@@ -234,12 +237,14 @@ export default function RadioPage() {
             style={{
               background: channel?.id === ch.id ? "rgba(255,215,0,0.08)" : "var(--bg-card)",
               borderColor: channel?.id === ch.id ? ch.color : "var(--bg-border)",
+              opacity: ch.streamUrl ? 1 : 0.45,
             }}
-            aria-label={`Select ${ch.name} channel`}
+            aria-label={`Select ${ch.name} channel${!ch.streamUrl ? " (no stream)" : ""}`}
             aria-pressed={channel?.id === ch.id}
           >
             <div className="text-2xl mb-1">{ch.emoji}</div>
             <div className="text-xs truncate" style={{ color: ch.color }}>{ch.name}</div>
+            {!ch.streamUrl && <div className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>—</div>}
           </button>
         ))}
       </div>

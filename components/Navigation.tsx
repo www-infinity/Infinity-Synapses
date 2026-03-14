@@ -11,17 +11,19 @@ interface NavLink {
 }
 
 const links: NavLink[] = [
-  { href: "/",        label: "Crown Index",  emoji: "👑" },
-  { href: "/radio",   label: "Radio",        emoji: "📻" },
-  { href: "/chat",    label: "AI Chat",      emoji: "😎" },
-  { href: "/terminal",label: "Terminal",     emoji: "🖥️" },
-  { href: "/gallery", label: "Gallery",      emoji: "🖼️" },
-  { href: "/builder", label: "Builder",      emoji: "🧱" },
-  { href: "/bots",    label: "Bots",         emoji: "🤖" },
-  { href: "/phone",   label: "H-Host",       emoji: "📞" },
-  { href: "/game",    label: "BTC Game",     emoji: "🎮" },
-  { href: "/tokens",  label: "Tokens",       emoji: "🟡" },
-  { href: "/charts",  label: "Charts",       emoji: "📊" },
+  { href: "/",          label: "Crown Index",  emoji: "👑" },
+  { href: "/radio",     label: "Radio",        emoji: "📻" },
+  { href: "/wallet",    label: "Wallet",       emoji: "💳" },
+  { href: "/chat",      label: "AI Chat",      emoji: "😎" },
+  { href: "/research",  label: "Research",     emoji: "✍️" },
+  { href: "/terminal",  label: "Terminal",     emoji: "🖥️" },
+  { href: "/gallery",   label: "Gallery",      emoji: "🖼️" },
+  { href: "/builder",   label: "Builder",      emoji: "🧱" },
+  { href: "/bots",      label: "Bots",         emoji: "🤖" },
+  { href: "/phone",     label: "H-Host",       emoji: "📞" },
+  { href: "/game",      label: "BTC Game",     emoji: "🎮" },
+  { href: "/tokens",    label: "Tokens",       emoji: "🟡" },
+  { href: "/charts",    label: "Charts",       emoji: "📊" },
 ];
 
 export default function Navigation() {

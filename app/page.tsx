@@ -9,8 +9,10 @@ interface HubCard {
 }
 
 const cards: HubCard[] = [
-  { href: "/radio",    emoji: "📻", title: "Bitcoin Crusher Radio", desc: "Entropy-driven channel selection via live BTC block hash. 16 emoji channels.", color: "var(--gold)" },
+  { href: "/radio",    emoji: "📻", title: "Bitcoin Crusher Radio", desc: "Entropy-driven channel selection via live BTC block hash. Spins to playable stations only.", color: "var(--gold)" },
+  { href: "/wallet",   emoji: "💳", title: "Wallet & Sign In",      desc: "Bitcoin-entropy identity. Connect with a live block hash — no password, no seed phrase.", color: "var(--cyan)" },
   { href: "/chat",     emoji: "😎", title: "AI Chat",               desc: "Real conversation backed by DuckDuckGo live search, reasoned into responses.", color: "var(--cyan)" },
+  { href: "/research", emoji: "✍️", title: "Research Writer",       desc: "Draft structured research documents from live web sources. Outline, write, copy.", color: "var(--purple)" },
   { href: "/terminal", emoji: "🖥️", title: "Infinity Coder Terminal",desc: "Browser-based terminal + Monaco code editor. Your Termux in the browser.", color: "var(--purple)" },
   { href: "/gallery",  emoji: "🖼️", title: "Gallery",               desc: "Dynamic image gallery. Navigate freely through visual worlds.", color: "#f97316" },
   { href: "/builder",  emoji: "🧱", title: "Builder",               desc: "Drag-and-drop page builder. Throw up a site inside your pages instantly.", color: "var(--green)" },
@@ -31,7 +33,7 @@ export default function HomePage() {
           Infinity Synapses
         </h1>
         <p className="text-lg md:text-xl max-w-2xl mx-auto" style={{ color: "var(--text-muted)" }}>
-          Crown Index — AI, Radio, Terminal, Gallery, Builder, Bots, Phone, Game, Tokens
+          Crown Index — AI, Radio, Wallet, Terminal, Research, Gallery, Builder, Bots, Phone, Game, Tokens
         </p>
         <div className="flex flex-wrap justify-center gap-3 mt-6">
           {["🟡", "👑", "💎", "🧱", "🦾", "🧲", "🕹️", "⭐", "🍄"].map((e) => (

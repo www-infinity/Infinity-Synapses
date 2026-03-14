@@ -42,7 +42,10 @@ export default function ChartsPage() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/bitcoin");
+      const res = await fetch("https://blockchain.info/latestblock", {
+        headers: { Accept: "application/json" },
+        cache: "no-store",
+      });
       const data = (await res.json()) as BtcBlock;
       setBtc(data);
       setPrices(generatePriceHistory(data.hash));

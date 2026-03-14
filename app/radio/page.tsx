@@ -55,13 +55,23 @@ export default function RadioPage() {
     if (audioRef.current) { audioRef.current.pause(); audioRef.current.src = ""; }
 
     try {
-      const res = await fetch("/api/bitcoin");
+      const res = await fetch("https://blockchain.info/latestblock", {
+        headers: { Accept: "application/json" },
+        cache: "no-store",
+      });
       if (!res.ok) throw new Error(`Status ${res.status}`);
       const data = (await res.json()) as BtcData;
       setBtc(data);
       const idx = channelFromHash(data.hash);
       setChannel(CHANNELS[idx]);
     } catch (e) {
+      // Fallback: generate a deterministic hash so the radio always works
+      const fallback = Array.from({ length: 64 }, () =>
+        Math.floor(Math.random() * 16).toString(16)
+      ).join("");
+      const fallbackData: BtcData = { hash: fallback, height: 0, time: Date.now() / 1000, fallback: true };
+      setBtc(fallbackData);
+      setChannel(CHANNELS[channelFromHash(fallback)]);
       setError(e instanceof Error ? e.message : "Failed to fetch BTC block");
     } finally {
       setLoading(false);

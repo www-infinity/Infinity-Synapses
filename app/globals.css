@@ -47,6 +47,52 @@ body {
 @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 .spin-slow { animation: spin-slow 8s linear infinite; }
 
+/* Spin reverse (counter-clockwise) */
+@keyframes spin-reverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+.spin-reverse { animation: spin-reverse 6s linear infinite; }
+
+/* Bitcoin orbit around infinity symbol */
+@keyframes btc-orbit {
+  from { transform: rotate(0deg) translateX(80px) rotate(0deg); }
+  to   { transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+}
+.btc-orbit { animation: btc-orbit 4s linear infinite; }
+
+/* Float up-down */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-12px); }
+}
+.float { animation: float 3s ease-in-out infinite; }
+
+/* Glow pulse */
+@keyframes glow-pulse {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(255,215,0,0.4)); }
+  50%       { filter: drop-shadow(0 0 24px rgba(255,215,0,0.9)); }
+}
+.glow-pulse { animation: glow-pulse 2s ease-in-out infinite; }
+
+/* Bitcoin glow pulse (orange) */
+@keyframes btc-glow-pulse {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(247,147,26,0.5)); }
+  50%       { filter: drop-shadow(0 0 28px rgba(247,147,26,1)); }
+}
+.btc-glow-pulse { animation: btc-glow-pulse 2s ease-in-out infinite; }
+
+/* 3D depth shimmer for cards */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+/* Rotate 3D tilt */
+@keyframes tilt3d {
+  0%, 100% { transform: perspective(600px) rotateY(0deg) rotateX(0deg); }
+  25%       { transform: perspective(600px) rotateY(8deg) rotateX(4deg); }
+  75%       { transform: perspective(600px) rotateY(-8deg) rotateX(-4deg); }
+}
+.tilt3d { animation: tilt3d 6s ease-in-out infinite; }
+
 /* Slide in */
 @keyframes slideIn {
   from { opacity: 0; transform: translateY(12px); }

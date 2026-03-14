@@ -10,6 +10,66 @@ interface Message {
   ts: number;
 }
 
+interface DDGResult {
+  AbstractText: string;
+  AbstractURL: string;
+  AbstractSource: string;
+  RelatedTopics: Array<{ Text?: string; FirstURL?: string; Topics?: Array<{ Text: string; FirstURL: string }> }>;
+  Answer: string;
+  Heading: string;
+}
+
+interface SearchResult {
+  heading: string;
+  abstract: string;
+  abstractURL: string;
+  answer: string;
+  topics: Array<{ text: string; url: string }>;
+}
+
+async function searchDDG(query: string): Promise<SearchResult> {
+  const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`;
+  const res = await fetch(url, { headers: { Accept: "application/json" } });
+  if (!res.ok) throw new Error(`DDG ${res.status}`);
+  const data = (await res.json()) as DDGResult;
+
+  const topics: Array<{ text: string; url: string }> = [];
+  for (const t of data.RelatedTopics ?? []) {
+    if (t.Text && t.FirstURL) {
+      topics.push({ text: t.Text, url: t.FirstURL });
+    } else if (t.Topics) {
+      for (const sub of t.Topics) {
+        topics.push({ text: sub.Text, url: sub.FirstURL });
+      }
+    }
+    if (topics.length >= 6) break;
+  }
+
+  return {
+    heading: data.Heading,
+    abstract: data.AbstractText,
+    abstractURL: data.AbstractURL,
+    answer: data.Answer,
+    topics,
+  };
+}
+
+function buildReply(query: string, search: SearchResult): string {
+  const parts: string[] = [];
+  if (search.answer) parts.push(search.answer);
+  if (search.abstract) {
+    parts.push(search.abstract);
+  } else if (!search.answer) {
+    parts.push(`Here's what I found on "${query}".`);
+  }
+  if (search.topics.length > 0) {
+    const topicLines = search.topics.slice(0, 4).map((t) => `• ${t.text}`).join("\n");
+    parts.push(`\nRelated threads:\n${topicLines}`);
+  }
+  if (search.abstractURL) parts.push(`\nSource: ${search.abstractURL}`);
+  return parts.join("\n\n");
+}
+
 let msgId = 0;
 
 export default function ChatPage() {
@@ -42,23 +102,16 @@ export default function ChatPage() {
       setLoading(true);
 
       try {
-        const res = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: text }),
-        });
-        const data = (await res.json()) as {
-          reply?: string;
-          error?: string;
-          searchData?: { topics?: Array<{ text: string; url: string }> };
-        };
-
-        const reply = data.reply ?? data.error ?? "No response.";
-        const sources = data.searchData?.topics ?? [];
-
+        const searchData = await searchDDG(text);
+        let reply: string;
+        if (!searchData.abstract && !searchData.answer && searchData.topics.length === 0) {
+          reply = `I searched for "${text}" but couldn't find a direct answer right now. Try rephrasing or check DuckDuckGo directly.`;
+        } else {
+          reply = buildReply(text, searchData);
+        }
         setMessages((m) => [
           ...m,
-          { id: ++msgId, role: "assistant", text: reply, sources, ts: Date.now() },
+          { id: ++msgId, role: "assistant", text: reply, sources: searchData.topics, ts: Date.now() },
         ]);
       } catch {
         setMessages((m) => [
